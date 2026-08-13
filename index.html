@@ -535,6 +535,7 @@ const TAG_ORDER = {
   workflow: ["Getting Started", "Discovery", "Impact & Metrics", "People & Organisations", "Dashboards & Analytics", "Reviewer Finder", "Research Security", "API"]
 };
 const WORKFLOW_LABELS = { "People & Organisations": "People & Orgs" };
+const INDUSTRY_LABELS = { "GFN": "Government/Funder/Nonprofit" };
 
 function escapeAttr(str) {
   return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
@@ -550,7 +551,9 @@ function buildPills() {
     const container = document.getElementById('filter-' + type);
     const values = TAG_ORDER[type].filter(v => present.has(v));
     container.innerHTML = values.map(v => {
-      const label = (type === 'workflow' && WORKFLOW_LABELS[v]) ? WORKFLOW_LABELS[v] : v;
+      const label = (type === 'workflow' && WORKFLOW_LABELS[v]) ? WORKFLOW_LABELS[v]
+        : (type === 'industry' && INDUSTRY_LABELS[v]) ? INDUSTRY_LABELS[v]
+        : v;
       return `<button class="pill ${type}" data-type="${type}" data-value="${escapeAttr(v)}">${escapeHtml(label)}</button>`;
     }).join('');
   });
@@ -608,7 +611,7 @@ function render() {
   }
 
   grid.innerHTML = filtered.map((d, i) => {
-    const industryTags = d.industry.map(t => `<span class="ctag industry">${t}</span>`).join('');
+    const industryTags = d.industry.map(t => `<span class="ctag industry">${INDUSTRY_LABELS[t] || t}</span>`).join('');
     const skillTags    = d.skill.map(t =>    `<span class="ctag skill">${t}</span>`).join('');
     const workflowTags = d.workflow.map(t =>  `<span class="ctag workflow">${t}</span>`).join('');
     const cta = d.url
